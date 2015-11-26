@@ -2,53 +2,35 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"io/ioutil"
-	"database/sql"
-	_ "github.com/lib/pq"
-	"log"
+	"akim/feedrover/ramsapi"
+	"akim/feedrover/persistence"
 )
 
-type StringSlice []string
-
 func main() {
-	resp, err := http.Get("http://hipsterjesus.com/api")
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer resp.Body.Close()
-	_, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println(err)
-	}
-	//fmt.Println("response Body:", string(body))
 
-	db, err := sql.Open("postgres", "user=feedrover host=/var/run/postgresql dbname=feedrover password=feedrover sslmode=disable")
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer db.Close()
+	fmt.Println("Number of Pages:", ramsapi.GetNumberOfPages())
 
-	var (
-		equip_id int
-		color string
-		)
-	rows, err := db.Query("select equip_id, color from playground")
-	if err != nil {
-		log.Fatal(err)
+	fmt.Println("|     id      |     type      |  page  |                          url                   |")
+	fmt.Println("|-------------+---------------+--------+------------------------------------------------|")
+
+	dataMap := ramsapi.FetchPageNumber(1)
+
+	data := dataMap.([]interface{})
+	for _, v := range data {
+		val := v.(map[string]interface{})
+		url := ramsapi.WebsiteName + "/api/json/" + val["type"].(string) + "." + val["id"].(string)
+		content := persistence.Content{
+						   val["id"].(string),
+						   val["content_id"].(string),
+					       val["type"].(string),
+						   "1",
+			               val["date_unix"].(string),
+			               url}
+		fmt.Printf("|%-13s|%-15s|%-8s|%-45s|\n", content.Id, content.Content_type, "1", content.Url)
+		persistence.Persist(&content)
+
 	}
-	defer rows.Close()
-	for rows.Next() {
-		err := rows.Scan(&equip_id, &color)
-		if err != nil {
-			log.Fatal(err)
-		}
-		log.Println(equip_id, color)
-	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
-	}
+
 
 
 }
