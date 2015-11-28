@@ -31,7 +31,7 @@ func GetNumberOfPages() int {
 }
 
 func FetchPageNumber(pageNumber int) interface{} {
-	resp, err := http.Get("http://" + WebsiteName + "/api/json/updated/" + strconv.Itoa(pageNumber))
+	resp, err := http.Get("http://" + WebsiteName + "/api/json/updated/page/" + strconv.Itoa(pageNumber))
 	if err != nil {
 		fmt.Println(err)
 	}

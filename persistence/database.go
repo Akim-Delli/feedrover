@@ -1,5 +1,9 @@
 package persistence
 
+// Database interaction
+// https://godoc.org/github.com/lib/pq
+
+
 import (
 	"fmt"
 	"database/sql"
@@ -12,7 +16,7 @@ type Content struct {
 	Id string
 	Content_id string
 	Content_type string
-	Page string
+	Page int
 	Date_unix string
 	Url string
 }
@@ -28,7 +32,7 @@ func Persist(content *Content)  {
 	if err != nil {
 		fmt.Println(err)
 	}
-	rows, err := db.Query("INSERT INTO cosmopolitan VALUES ($1, $2, $3, $4, $5, $6)", content.Id, content.Content_id, content.Content_type, timestamp, 1, content.Url)
+	rows, err := db.Query("INSERT INTO cosmopolitan SELECT $1, $2, $3, $4, $5, $6, Now() WHERE NOT EXISTS (SELECT 1 FROM cosmopolitan WHERE id=$1);", content.Id, content.Content_id, content.Content_type, timestamp, 1, content.Url)
 	if err != nil {
 		log.Fatal(err)
 	}
