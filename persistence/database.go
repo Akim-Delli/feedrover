@@ -32,21 +32,10 @@ func Persist(content *Content)  {
 	if err != nil {
 		fmt.Println(err)
 	}
-	rows, err := db.Query("INSERT INTO cosmopolitan SELECT $1, $2, $3, $4, $5, $6, Now() WHERE NOT EXISTS (SELECT 1 FROM cosmopolitan WHERE id=$1);", content.Id, content.Content_id, content.Content_type, timestamp, 1, content.Url)
+	rows, err := db.Query("INSERT INTO elle SELECT $1, $2, $3, $4, $5, $6, Now() WHERE NOT EXISTS (SELECT 1 FROM elle WHERE id=$1);", content.Id, content.Content_id, content.Content_type, timestamp, 1, content.Url)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
-//	for rows.Next() {
-//		err := rows.Scan(&equip_id, &color)
-//		if err != nil {
-//			log.Fatal(err)
-//		}
-//		log.Println(equip_id, color)
-//	}
-//	err = rows.Err()
-//	if err != nil {
-//		log.Fatal(err)
-//	}
 }
 

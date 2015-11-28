@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-var WebsiteName string = "www.cosmopolitan.com"
+var WebsiteName string = "www.elle.com"
 
 
 func GetNumberOfPages() int {
