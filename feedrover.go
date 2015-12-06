@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"akim/feedrover/ramsapi"
-	"akim/feedrover/persistence"
+	"github.com/Akim-Delli/feedrover/ramsapi"
+	"github.com/Akim-Delli/feedrover/persistence"
 )
 
 func main() {
