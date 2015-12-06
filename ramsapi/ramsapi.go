@@ -8,11 +8,9 @@ import (
 	"strconv"
 )
 
-var WebsiteName string = "www.elle.com"
 
-
-func GetNumberOfPages() int {
-	resp, err := http.Get("http://" + WebsiteName + "/api/json/updated")
+func GetNumberOfPages(WebsiteName string) int {
+	resp, err := http.Get("http://www." + WebsiteName + ".com/api/json/updated")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -30,8 +28,8 @@ func GetNumberOfPages() int {
 
 }
 
-func FetchPageNumber(pageNumber int) interface{} {
-	resp, err := http.Get("http://" + WebsiteName + "/api/json/updated/page/" + strconv.Itoa(pageNumber))
+func FetchPageNumber(pageNumber int, WebsiteName string) interface{} {
+	resp, err := http.Get("http://www." + WebsiteName + ".com/api/json/updated/page/" + strconv.Itoa(pageNumber))
 	if err != nil {
 		fmt.Println(err)
 	}
