@@ -29,7 +29,7 @@ func main() {
 
 		contentLongId := flag.Arg(0)
 		inputFields := strings.Split(contentLongId, ".")
-		fmt.Println("migrating  ", contentLongId , ".....", inputFields)
+		fmt.Println("migrating  ", inputFields)
 		sendToRover(inputFields)
 
 
@@ -77,9 +77,10 @@ func sendToRover(inputFields []string) {
 	contentUrl := persistence.GetContentUrl(inputFields[0], inputFields[1], inputFields[2])
 	fmt.Println("sending To Tran: " + contentUrl)
 
+	fmt.Println("==========================   Tran Response ============================================")
 	contentUrl = "http://" + contentUrl
 	tranapi.Post(contentUrl, inputFields[0])
-	fmt.Println("=============================")
+	fmt.Println("=======================================================================================")
 }
 
 
