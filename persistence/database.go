@@ -43,3 +43,34 @@ func Persist(content *Content)  {
 	defer rows.Close()
 }
 
+func GetContentUrl(table , contentType, id string ) string {
+	db, err := sql.Open("postgres",
+						fmt.Sprintf("user=%s host=%s dbname=%v password=%v sslmode=%s",
+							config.DB_USER, config.DB_HOST, config.DB_NAME, config.DB_PASSWORD, config.DB_SSL_MODE))
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer db.Close()
+
+	var result string
+	// TODO parametrize table in sql statement
+	if table == "cosmopolitan" {
+		err = db.QueryRow("SELECT url FROM cosmopolitan WHERE type=$1 AND id=$2", contentType, id).Scan(&result)
+	} else if table == "elle"{
+		err = db.QueryRow("SELECT url FROM elle WHERE type=$1 AND id=$2",table, contentType, id).Scan(&result)
+	} else {
+		log.Fatal(table + " table does not exist!")
+	}
+
+	switch {
+	case err == sql.ErrNoRows:
+		log.Printf("No content with that ID.")
+	case err != nil:
+		log.Fatal(err)
+	default:
+		fmt.Printf("content is %s %s %s\n", table, contentType, id)
+	}
+
+	return result
+}
+

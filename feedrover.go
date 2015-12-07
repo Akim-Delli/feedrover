@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"flag"
-//	"os"
+	"strings"
+	"github.com/Sirupsen/logrus"
 	"github.com/Akim-Delli/feedrover/ramsapi"
 	"github.com/Akim-Delli/feedrover/persistence"
+	"github.com/Akim-Delli/feedrover/tranapi"
 )
 
 func main() {
@@ -21,6 +23,18 @@ func main() {
 		fmt.Println("fetching latest Content url from site: ", site)
 
 		fetchContentUrlFromSite(site)
+		fmt.Println("fetching latest Content url from site: ", site)
+
+	} else if *mode == "migrate" {
+
+		contentLongId := flag.Arg(0)
+		inputFields := strings.Split(contentLongId, ".")
+		fmt.Println("migrating  ", contentLongId , ".....", inputFields)
+		sendToRover(inputFields)
+
+
+	} else {
+		logrus.Fatal(*mode + " is not a valid mode")
 	}
 }
 
@@ -30,9 +44,7 @@ func fetchContentUrlFromSite(websiteName string) {
 
 	for i := 0;  i<=totalNumberOfPages; i++ {
 
-		fmt.Println("|------------+---------------+------------+---------------------------------------------|")
-		fmt.Println("|      id    |     type      |page (total)|                  url                        |")
-		fmt.Println("|------------+---------------+------------+---------------------------------------------|")
+		printHeader()
 
 		dataMap := ramsapi.FetchPageNumber(i, websiteName)
 
@@ -52,6 +64,22 @@ func fetchContentUrlFromSite(websiteName string) {
 
 		}
 	}
+}
+
+func printHeader() {
+	fmt.Println("|------------+---------------+------------+---------------------------------------------|")
+	fmt.Println("|      id    |     type      |page (total)|                  url                        |")
+	fmt.Println("|------------+---------------+------------+---------------------------------------------|")
+
+}
+
+func sendToRover(inputFields []string) {
+	contentUrl := persistence.GetContentUrl(inputFields[0], inputFields[1], inputFields[2])
+	fmt.Println("sending To Tran: " + contentUrl)
+
+	contentUrl = "http://" + contentUrl
+	tranapi.Post(contentUrl, inputFields[0])
+	fmt.Println("=============================")
 }
 
 
